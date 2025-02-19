@@ -3,12 +3,16 @@ import { createTheme, ThemeProvider } from '@mui/material'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import './App.css'
+import Navbar from './components/Navbar';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
+      <>
+      <Navbar />
       <Dashboard />
+      </>
     ) 
   },
 ]);
