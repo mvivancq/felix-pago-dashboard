@@ -15,6 +15,10 @@
 
 }
 
+#root {
+  padding: 0rem;
+}
+
 body {
   background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
 }
