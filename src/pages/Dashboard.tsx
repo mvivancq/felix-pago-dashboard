@@ -1,9 +1,9 @@
-import { Container, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/joy";
 
 const Dashboard = () => {
   return (
     <Container sx={{ minHeight: "100vh", paddingTop: "0rem"}}>
-        <Typography variant="h1" align="center">
+        <Typography level="h1" sx={{ textAlign: "center", paddingTop: "2rem"}}>
             Dashboard
         </Typography>
     </Container>
