@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import './App.css'
-import Navbar from './components/Navbar';
+import Navbar from './components/Navbar/Navbar';
 
 const router = createBrowserRouter([
   {

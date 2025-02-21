@@ -7,6 +7,7 @@ import {
 } from '@mui/joy';
 import Home from '@mui/icons-material/Home';
 import Person from '@mui/icons-material/Person';
+import './Navbar.css';
 
 export default function Navbar() {
   return (
@@ -14,6 +15,7 @@ export default function Navbar() {
       <List role="menubar" orientation="horizontal">
         <ListItem role="none">
           <ListItemButton
+            className='navbar-item'
             role="menuitem"
             component="a"
             href="#horizontal-list"
@@ -24,7 +26,7 @@ export default function Navbar() {
         </ListItem>
         <ListDivider />
         <ListItem role="none">
-          <ListItemButton role="menuitem" component="a" href="#horizontal-list">
+          <ListItemButton role="menuitem" component="a" href="#horizontal-list" className='navbar-item'>
             Dashboard
           </ListItemButton>
         </ListItem>
@@ -35,6 +37,7 @@ export default function Navbar() {
             component="a"
             href="#horizontal-list"
             aria-label="Profile"
+            className='navbar-item'
           >
             <Person />
           </ListItemButton>
