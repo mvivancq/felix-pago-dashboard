@@ -1,5 +1,5 @@
 import { Container, Typography } from "@mui/joy";
-import TableComponent from "../components/table/table";
+import Table from "../components/table/Table";
 import { useTransactions } from "../hooks/useTransactions";
 
 const Dashboard = () => {
@@ -14,7 +14,7 @@ const Dashboard = () => {
             <Typography level="h3" sx={{ textAlign: "center", paddingTop: "2rem"}}>
                 Dashboard
             </Typography>
-            <TableComponent rows={ rows || []}/>
+            <Table rows={ rows || []}/>
         </Container>
     );
 }

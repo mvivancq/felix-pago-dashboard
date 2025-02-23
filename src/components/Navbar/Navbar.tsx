@@ -7,9 +7,9 @@ import {
 } from '@mui/joy';
 import Home from '@mui/icons-material/Home';
 import Person from '@mui/icons-material/Person';
-import './navbar.css';
+import './Navbar.css';
 
-export default function Navbar() {
+function Navbar() {
   return (
     <Box component="nav" aria-label="My site" sx={{ flexGrow: 1, border: 1, borderColor: 'divider', backgroundColor: '#8fb0f5' }}>
       <List role="menubar" orientation="horizontal">
@@ -46,3 +46,5 @@ export default function Navbar() {
     </Box>
   );
 }
+
+export default Navbar;

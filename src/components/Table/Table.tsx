@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Table, Sheet } from "@mui/joy";
-import "./table.css";
+import "./Table.css";
 
 interface Row {
   transaction_id: string;
