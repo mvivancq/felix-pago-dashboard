@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Table, Sheet } from "@mui/joy";
-import "./Table.css";
+import "./table.css";
 
 interface Row {
   transaction_id: string;
@@ -22,7 +22,7 @@ const TableComponent: FC<TableProps> = ({ rows }) => {
   return (
     <Sheet
       sx={{
-        height: "70vh", // Altura máxima para habilitar scroll vertical si es necesario
+        height: "70vh", 
         display: "flex",
         justifyContent: "center",
       }}

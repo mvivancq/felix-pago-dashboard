@@ -7,7 +7,7 @@ import {
 } from '@mui/joy';
 import Home from '@mui/icons-material/Home';
 import Person from '@mui/icons-material/Person';
-import './Navbar.css';
+import './navbar.css';
 
 export default function Navbar() {
   return (
