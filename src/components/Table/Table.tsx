@@ -1,17 +1,12 @@
 import { FC, useState, useEffect } from "react";
-import {
-  Table,
-  Sheet,
-  Button,
-  Menu,
-  MenuItem,
-} from "@mui/joy";
+import { Table, Sheet, Button, Menu, MenuItem } from "@mui/joy";
 import Pagination from "@mui/material/Pagination"; 
 import { Row } from "../../types/dashboard";
 import { tableDate, formatUSD } from "../../utils/tableUtils";
 import SettingsIcon from "@mui/icons-material/Settings";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import ModalTransaction from "../modal/ModalTransaction";  // Importamos el modal de transacción
 
 interface TableProps {
   rows: Row[];
@@ -36,9 +31,11 @@ const TableComponent: FC<TableProps> = ({ rows }) => {
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [openModal, setOpenModal] = useState(false); // Estado para el modal
+  const [selectedTransaction, setSelectedTransaction] = useState<Row | null>(null); // Estado para la transacción seleccionada
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl((prevAnchorEl) => (prevAnchorEl ? null : event.currentTarget)); // Cierra el menú si ya está abierto
+    setAnchorEl((prevAnchorEl) => (prevAnchorEl ? null : event.currentTarget)); // Toggle el menú
   };
 
   const handleCloseMenu = () => {
@@ -54,22 +51,22 @@ const TableComponent: FC<TableProps> = ({ rows }) => {
     setPage(newPage);
   };
 
-  // Resetea la página cuando los filtros cambian
+  // Abre el modal con los detalles de la transacción
+  const handleOpenModal = (row: Row) => {
+    setSelectedTransaction(row); // Guarda la transacción seleccionada
+    setOpenModal(true); // Abre el modal
+  };
+
+  // Cierra el modal
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedTransaction(null); // Limpia la transacción seleccionada
+  };
+
+    // Resetea la página cuando los filtros cambian
   useEffect(() => {
-      setPage(1); 
+    setPage(1); 
   }, [rows]);
-
-  // Detecta clics fuera del menú y cierra el menú
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (anchorEl && !anchorEl.contains(event.target as Node)) {
-        handleCloseMenu();
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [anchorEl]);
 
   return (
     <Sheet
@@ -135,7 +132,11 @@ const TableComponent: FC<TableProps> = ({ rows }) => {
           </thead>
           <tbody>
             {rows.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((row) => (
-              <tr key={row.transaction_id} style={{ cursor: "pointer", transition: "0.3s" }}>
+              <tr
+                key={row.transaction_id}
+                style={{ cursor: "pointer", transition: "0.3s" }}
+                onClick={() => handleOpenModal(row)} // Abre el modal al hacer clic
+              >
                 {visibleColumns["transaction_id"] && <td style={{ textAlign: "center" }}>{row.transaction_id}</td>}
                 {visibleColumns["sender_whatsapp"] && <td style={{ textAlign: "center" }}>{row.sender_whatsapp}</td>}
                 {visibleColumns["receiver_whatsapp"] && <td style={{ textAlign: "center" }}>{row.receiver_whatsapp}</td>}
@@ -176,6 +177,9 @@ const TableComponent: FC<TableProps> = ({ rows }) => {
         size="large"
         sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}
       />
+
+      {/* Modal para ver los detalles de la transacción */}
+      <ModalTransaction open={openModal} transaction={selectedTransaction} onClose={handleCloseModal} />
     </Sheet>
   );
 };
