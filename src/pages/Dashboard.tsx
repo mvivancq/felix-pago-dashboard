@@ -26,13 +26,6 @@ const Dashboard = () => {
     { label: "Date", value: "date" as keyof Row },
   ];
 
-  const filterTypes = [
-    { label: "Dropdown Filter", value: "dropdown" as keyof Row }, 
-    { label: "Text Input", value: "text" as keyof Row  }, 
-    { label: "Range", value: "range" }, 
-    { label: "Date Picker", value: "date" as keyof Row  }
-  ];
-
   const handleApplyFilter = (filtered: Row[]) => {
     setFilteredRows(filtered.length > 0 ? filtered : rows || []);
   };
@@ -45,7 +38,7 @@ const Dashboard = () => {
       <Typography level="h3" sx={{ textAlign: "center", paddingTop: "2rem" }}>
         Dashboard
       </Typography>
-      <Filters columns={columns} filterTypes={filterTypes} rows={rows || []} onFilter={handleApplyFilter} />
+      <Filters columns={columns} rows={rows || []} onFilter={handleApplyFilter} />
       <Table rows={filteredRows} />
     </Container>
   );
