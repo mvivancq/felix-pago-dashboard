@@ -4,6 +4,7 @@ import Table from "../components/table/Table";
 import { useTransactions } from "../hooks/useTransactions";
 import Filters from "../components/filters/Filters";
 import { Row } from "../types/dashboard";
+import TransactionChart from "../components/transactionChart/TransactionChart"; // Importamos el Pie Chart
 
 const Dashboard = () => {
   const { data: rows, isLoading, isError } = useTransactions();
@@ -38,6 +39,7 @@ const Dashboard = () => {
       <Typography level="h3" sx={{ textAlign: "center", paddingTop: "2rem" }}>
         Dashboard
       </Typography>
+      <TransactionChart rows={rows || []} />
       <Filters columns={columns} rows={rows || []} onFilter={handleApplyFilter} />
       <Table rows={filteredRows} />
     </Container>
@@ -45,3 +47,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
