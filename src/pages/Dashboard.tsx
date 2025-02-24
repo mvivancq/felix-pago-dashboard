@@ -27,10 +27,10 @@ const Dashboard = () => {
   ];
 
   const filterTypes = [
-    { label: "Dropdown Filter", value: "dropdown" }, 
-    { label: "Text Input", value: "text" }, 
+    { label: "Dropdown Filter", value: "dropdown" as keyof Row }, 
+    { label: "Text Input", value: "text" as keyof Row  }, 
     { label: "Range", value: "range" }, 
-    { label: "Date Picker", value: "date" }
+    { label: "Date Picker", value: "date" as keyof Row  }
   ];
 
   const handleApplyFilter = (filtered: Row[]) => {

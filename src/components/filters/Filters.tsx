@@ -10,10 +10,11 @@ import {
   TextField,
   Chip,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers"; // ✅ Nueva importación correcta
 import { Row } from "../../types/dashboard";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
+import { DatePicker } from "@mui/x-date-pickers"; // Usamos correctamente DatePicker de MUI
+import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 
 interface FilterOption {
@@ -32,8 +33,8 @@ const Filters: React.FC<FiltersProps> = ({ columns, rows, onFilter }) => {
   const [selectedColumn, setSelectedColumn] = useState<keyof Row | "">("");
   const [filterValue, setFilterValue] = useState<string>("");
   const [filters, setFilters] = useState<Record<string, string | { start: string; end: string }>>({});
-  const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
-  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -50,17 +51,18 @@ const Filters: React.FC<FiltersProps> = ({ columns, rows, onFilter }) => {
   const handleApplyFilter = () => {
     if (!selectedColumn) return;
 
-    let newFilters = { ...filters };
+    const newFilters = { ...filters };
 
-    if (selectedColumn === "date") {
-      if (!startDate || !endDate) return;
-      newFilters[selectedColumn] = { start: startDate.format("YYYY-MM-DD"), end: endDate.format("YYYY-MM-DD") };
+    if (selectedColumn === "date" && startDate && endDate) {
+      newFilters[selectedColumn] = {
+        start: startDate.format("YYYY-MM-DD"),
+        end: endDate.format("YYYY-MM-DD"),
+      };
     } else {
-      if (filterValue.trim() === "") return;
       newFilters[selectedColumn] = filterValue;
     }
 
-    let filteredRows = rows.filter((row) =>
+    const filteredRows = rows.filter((row) =>
       Object.entries(newFilters).every(([key, val]) => {
         if (key === "status") return row[key] === val;
         if (key === "transaction_id") return row[key].toLowerCase().includes(val.toLowerCase());
@@ -75,7 +77,7 @@ const Filters: React.FC<FiltersProps> = ({ columns, rows, onFilter }) => {
     );
 
     setFilters(newFilters);
-    onFilter(filteredRows);
+    onFilter(filteredRows); // Actualiza los datos filtrados
     handleClose();
   };
 
@@ -83,7 +85,7 @@ const Filters: React.FC<FiltersProps> = ({ columns, rows, onFilter }) => {
     const newFilters = { ...filters };
     delete newFilters[column];
 
-    let filteredRows = rows.filter((row) =>
+    const filteredRows = rows.filter((row) =>
       Object.entries(newFilters).every(([key, val]) => {
         if (key === "status") return row[key] === val;
         if (key === "transaction_id") return row[key].toLowerCase().includes(val.toLowerCase());
@@ -98,7 +100,7 @@ const Filters: React.FC<FiltersProps> = ({ columns, rows, onFilter }) => {
     );
 
     setFilters(newFilters);
-    onFilter(filteredRows);
+    onFilter(filteredRows); // Actualiza los datos filtrados
   };
 
   return (
@@ -165,11 +167,13 @@ const Filters: React.FC<FiltersProps> = ({ columns, rows, onFilter }) => {
                     label="Start Date"
                     value={startDate}
                     onChange={(date) => setStartDate(date)}
+                    renderInput={(params) => <TextField {...params} fullWidth />}
                   />
                   <DatePicker
                     label="End Date"
                     value={endDate}
                     onChange={(date) => setEndDate(date)}
+                    renderInput={(params) => <TextField {...params} fullWidth />}
                   />
                 </div>
               ) : (
