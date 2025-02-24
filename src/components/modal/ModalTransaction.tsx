@@ -1,16 +1,5 @@
 import { FC } from "react";
-import {
-  Modal,
-  ModalDialog,
-  Typography,
-  Button,
-  Stack,
-  Card,
-  Divider,
-  Box,
-  Grid,
-  Chip,
-} from "@mui/joy";
+import { Modal, ModalDialog, Typography, Button, Stack, Card, Divider, Box, Grid, Chip } from "@mui/joy";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
@@ -24,12 +13,7 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz"; // Exchange Rate
 import { Row } from "../../types/dashboard";
 import { formatUSD } from "../../utils/tableUtils";
 
-interface ModalTransactionProps {
-  open: boolean;
-  onClose: () => void;
-  transaction: Row | null;
-}
-
+// Esta función se usa para devolver el color y el icono según el estado de la transacción
 const getStatusInfo = (status: string) => {
   switch (status.toLowerCase()) {
     case "completed":
@@ -38,20 +22,28 @@ const getStatusInfo = (status: string) => {
       return { color: "warning", icon: <HourglassEmptyIcon />, text: "Pending" };
     case "failed":
       return { color: "danger", icon: <CancelIcon />, text: "Failed" };
+    case "in progress":
+      return { color: "neutral", icon: <HourglassEmptyIcon />, text: "In Progress" };
     default:
       return { color: "neutral", icon: null, text: status };
   }
 };
 
+interface ModalTransactionProps {
+  open: boolean;
+  onClose: () => void;
+  transaction: Row | null;
+}
+
 const ModalTransaction: FC<ModalTransactionProps> = ({ open, onClose, transaction }) => {
   if (!transaction) return null;
+
+  const { color, icon, text } = getStatusInfo(transaction.status);
 
   // Cálculos adicionales
   const feesPercentage = 0.05; // 5% fees
   const fees = transaction.amount_sent * feesPercentage;
   const totalReceived = transaction.amount_received - fees;
-
-  const { color, icon, text } = getStatusInfo(transaction.status);
 
   return (
     <Modal open={open} onClose={onClose}>
