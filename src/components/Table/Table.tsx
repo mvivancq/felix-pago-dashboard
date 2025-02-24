@@ -1,105 +1,166 @@
-import { FC, useState, useEffect } from "react";
-import { Table, Sheet, Button } from "@mui/joy";
-import { tableDate, formatUSD } from "../../utils/tableUtils";
+import { FC, useState } from "react";
+import {
+  Table,
+  Sheet,
+  Button,
+  Menu,
+  MenuItem,
+} from "@mui/joy";
+import Pagination from "@mui/material/Pagination"; 
 import { Row } from "../../types/dashboard";
-import "./Table.css";
+import { tableDate, formatUSD } from "../../utils/tableUtils";
+import SettingsIcon from "@mui/icons-material/Settings";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 interface TableProps {
   rows: Row[];
 }
 
+const columnsConfig = [
+  { label: "Transaction ID", key: "transaction_id" },
+  { label: "Sender Whatsapp", key: "sender_whatsapp" },
+  { label: "Receiver Whatsapp", key: "receiver_whatsapp" },
+  { label: "Amount Sent", key: "amount_sent" },
+  { label: "Exchange Rate", key: "exchange_rate" },
+  { label: "Amount Received", key: "amount_received" },
+  { label: "Status", key: "status" },
+  { label: "Payment Method", key: "payment_method" },
+  { label: "Date", key: "date" },
+];
+
 const TableComponent: FC<TableProps> = ({ rows }) => {
-  const [currentPage, setCurrentPage] = useState(0);
-  const rowsPerPage = 10; 
+  const [visibleColumns, setVisibleColumns] = useState(
+    columnsConfig.reduce((acc, col) => ({ ...acc, [col.key]: true }), {} as Record<string, boolean>)
+  );
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10;
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [rows]);
-
-  const totalPages = Math.ceil(rows.length / rowsPerPage);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  const handlePrevPage = () => {
-    if (currentPage > 0) setCurrentPage(currentPage - 1);
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
   };
 
-  const paginatedRows = rows.slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage);
+  const handleToggleColumn = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+    handleCloseMenu(); // ✅ Cierra el menú después de hacer clic en una opción
+  };
+
+  const handlePageChange = (_event: any, newPage: number) => {
+    setPage(newPage);
+  };
 
   return (
     <Sheet
       sx={{
-        height: "70vh",
+        height: "75vh",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        padding: "16px",
+        justifyContent: "space-between",
+        paddingBottom: "20px",
       }}
     >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "90vw",
-          overflowX: "auto",
-          overflowY: "auto",
-        }}
-      >
+      {/* Opciones de columnas */}
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+        <Button
+          startDecorator={<SettingsIcon />}
+          variant="outlined"
+          color="primary"
+          onClick={handleOpenMenu}
+        >
+          Customize Columns
+        </Button>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
+          {columnsConfig.map((col) => (
+            <MenuItem key={col.key} onClick={() => handleToggleColumn(col.key)}>
+              {visibleColumns[col.key] ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              {col.label}
+            </MenuItem>
+          ))}
+        </Menu>
+      </div>
+
+      {/* Tabla */}
+      <div style={{ overflowX: "auto", flexGrow: 1 }}>
         <Table
           hoverRow
           stickyHeader
           sx={{
-            minWidth: "900px",
-            width: "100%",
+            minWidth: "1000px",
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+            overflow: "hidden",
+            backgroundColor: "white",
           }}
         >
-          <thead>
+          <thead style={{ backgroundColor: "#f4f4f4" }}>
             <tr>
-              <th className="table-title">Transaction Id</th>
-              <th className="table-title">Sender Whatsapp</th>
-              <th className="table-title">Receiver Whatsapp</th>
-              <th className="table-title">Amount Sent</th>
-              <th className="table-title">Exchange Rate</th>
-              <th className="table-title">Amount Received</th>
-              <th className="table-title">Status</th>
-              <th className="table-title">Payment Method</th>
-              <th className="table-title">Date</th>
+              {columnsConfig.map(
+                (col) =>
+                  visibleColumns[col.key] && (
+                    <th
+                      key={col.key}
+                      style={{
+                        padding: "12px",
+                        minWidth: "120px",
+                        textAlign: "center",
+                      }}
+                    >
+                      {col.label}
+                    </th>
+                  )
+              )}
             </tr>
           </thead>
           <tbody>
-            {paginatedRows.map((row) => (
-              <tr key={row.transaction_id}>
-                <td>{row.transaction_id}</td>
-                <td>{row.sender_whatsapp}</td>
-                <td>{row.receiver_whatsapp}</td>
-                <td>{formatUSD(row.amount_sent)}</td>
-                <td>{formatUSD(row.exchange_rate)}</td>
-                <td>{formatUSD(row.amount_received)}</td>
-                <td>{row.status}</td>
-                <td>{row.payment_method}</td>
-                <td>{tableDate(row.date)}</td>
+            {rows.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((row) => (
+              <tr key={row.transaction_id} style={{ cursor: "pointer", transition: "0.3s" }}>
+                {visibleColumns["transaction_id"] && <td style={{ textAlign: "center" }}>{row.transaction_id}</td>}
+                {visibleColumns["sender_whatsapp"] && <td style={{ textAlign: "center" }}>{row.sender_whatsapp}</td>}
+                {visibleColumns["receiver_whatsapp"] && <td style={{ textAlign: "center" }}>{row.receiver_whatsapp}</td>}
+                {visibleColumns["amount_sent"] && <td style={{ textAlign: "center" }}>{formatUSD(row.amount_sent)}</td>}
+                {visibleColumns["exchange_rate"] && <td style={{ textAlign: "center" }}>{formatUSD(row.exchange_rate)}</td>}
+                {visibleColumns["amount_received"] && <td style={{ textAlign: "center" }}>{formatUSD(row.amount_received)}</td>}
+                {visibleColumns["status"] && (
+                  <td
+                    style={{
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      color:
+                        row.status.toLowerCase() === "completed"
+                          ? "green"
+                          : row.status.toLowerCase() === "pending"
+                          ? "orange"
+                          : "red",
+                    }}
+                  >
+                    {row.status}
+                  </td>
+                )}
+                {visibleColumns["payment_method"] && <td style={{ textAlign: "center" }}>{row.payment_method}</td>}
+                {visibleColumns["date"] && <td style={{ textAlign: "center" }}>{tableDate(row.date)}</td>}
               </tr>
             ))}
           </tbody>
         </Table>
       </div>
 
-      {/* Controles de Paginación */}
-      <div style={{ display: "flex", alignItems: "center", gap: "16px", marginTop: "10px" }}>
-        <Button onClick={handlePrevPage} disabled={currentPage === 0}>
-          Anterior
-        </Button>
-
-        <span>Página {currentPage + 1} de {totalPages}</span>
-
-        <Button onClick={handleNextPage} disabled={currentPage >= totalPages - 1}>
-          Siguiente
-        </Button>
-      </div>
+      {/* Paginación */}
+      <Pagination
+        count={Math.ceil(rows.length / rowsPerPage)}
+        page={page}
+        onChange={handlePageChange}
+        variant="outlined"
+        shape="rounded"
+        size="large"
+        sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}
+      />
     </Sheet>
   );
 };
 
 export default TableComponent;
-
