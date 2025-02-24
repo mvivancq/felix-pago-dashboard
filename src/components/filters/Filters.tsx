@@ -159,6 +159,7 @@ const Filters: React.FC<FiltersProps> = ({ columns, rows, onFilter }) => {
                     <MenuItem value="Pending">Pending</MenuItem>
                     <MenuItem value="Completed">Completed</MenuItem>
                     <MenuItem value="Failed">Failed</MenuItem>
+                    <MenuItem value="In Progress">In Progress</MenuItem>
                   </Select>
                 </FormControl>
               ) : selectedColumn === "date" ? (
