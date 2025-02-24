@@ -22,6 +22,7 @@ import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty"; // Pending
 import CancelIcon from "@mui/icons-material/Cancel"; // Failed
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz"; // Exchange Rate
 import { Row } from "../../types/dashboard";
+import { formatUSD } from "../../utils/tableUtils";
 
 interface ModalTransactionProps {
   open: boolean;
@@ -44,6 +45,11 @@ const getStatusInfo = (status: string) => {
 
 const ModalTransaction: FC<ModalTransactionProps> = ({ open, onClose, transaction }) => {
   if (!transaction) return null;
+
+  // Cálculos adicionales
+  const feesPercentage = 0.05; // 5% fees
+  const fees = transaction.amount_sent * feesPercentage;
+  const totalReceived = transaction.amount_received - fees;
 
   const { color, icon, text } = getStatusInfo(transaction.status);
 
@@ -150,6 +156,28 @@ const ModalTransaction: FC<ModalTransactionProps> = ({ open, onClose, transactio
                   Amount Received
                 </Typography>
                 <Typography>${transaction.amount_received.toFixed(2)} {transaction.currency}</Typography>
+              </Card>
+            </Grid>
+          </Grid>
+
+          {/* Fees y Total Received en la misma fila */}
+          <Grid container spacing={2}>
+            <Grid xs={6} sx={{ display: "flex" }}>
+              <Card variant="outlined" sx={{ padding: 1.5, flexGrow: 1 }}>
+                <Typography level="title-sm">
+                  <AttachMoneyIcon sx={{ marginRight: 1, verticalAlign: "middle" }} />
+                  Fees (5%)
+                </Typography>
+                <Typography>{`- ${formatUSD(fees)}`}</Typography>
+              </Card>
+            </Grid>
+            <Grid xs={6} sx={{ display: "flex" }}>
+              <Card variant="outlined" sx={{ padding: 1.5, flexGrow: 1 }}>
+                <Typography level="title-sm">
+                  <AttachMoneyIcon sx={{ marginRight: 1, verticalAlign: "middle" }} />
+                  Total Received (after fees)
+                </Typography>
+                <Typography>{formatUSD(totalReceived)}</Typography>
               </Card>
             </Grid>
           </Grid>
