@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import {
   Table,
   Sheet,
@@ -38,7 +38,7 @@ const TableComponent: FC<TableProps> = ({ rows }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl((prevAnchorEl) => (prevAnchorEl ? null : event.currentTarget)); // Cierra el menú si ya está abierto
   };
 
   const handleCloseMenu = () => {
@@ -47,12 +47,29 @@ const TableComponent: FC<TableProps> = ({ rows }) => {
 
   const handleToggleColumn = (key: string) => {
     setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
-    handleCloseMenu(); // ✅ Cierra el menú después de hacer clic en una opción
+    handleCloseMenu(); // Cierra el menú después de hacer clic en una opción
   };
 
   const handlePageChange = (_event: any, newPage: number) => {
     setPage(newPage);
   };
+
+  // Resetea la página cuando los filtros cambian
+  useEffect(() => {
+      setPage(1); 
+  }, [rows]);
+
+  // Detecta clics fuera del menú y cierra el menú
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (anchorEl && !anchorEl.contains(event.target as Node)) {
+        handleCloseMenu();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [anchorEl]);
 
   return (
     <Sheet
