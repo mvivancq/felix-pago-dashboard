@@ -10,7 +10,7 @@ import {
 import { Row } from "../../types/dashboard";
 
 // Datos de ejemplo de las transacciones
-const COLORS = ["#00C49F", "#FFBB28", "#FF8042", "#FF7F50"];  // Agregamos un color adicional para "In Progress"
+const COLORS = ["#00C49F", "#FFBB28", "#FF8042", "#FF7F50"];  
 
 const TransactionChart: React.FC<{ rows: Row[] }> = ({ rows }) => {
   // Crea una función para contar las transacciones por estado
@@ -34,7 +34,7 @@ const TransactionChart: React.FC<{ rows: Row[] }> = ({ rows }) => {
       { name: "Completed", value: statusCount.completed },
       { name: "Pending", value: statusCount.pending },
       { name: "Failed", value: statusCount.failed },
-      { name: "In Progress", value: statusCount.inProgress },  // Nueva categoría In Progress
+      { name: "In Progress", value: statusCount.inProgress }, 
     ];
   };
 

@@ -76,6 +76,7 @@ const TableComponent: FC<TableProps> = ({ rows }) => {
         flexDirection: "column",
         justifyContent: "space-between",
         paddingBottom: "20px",
+        backgroundColor: "transparent",
       }}
     >
       {/* Opciones de columnas */}
